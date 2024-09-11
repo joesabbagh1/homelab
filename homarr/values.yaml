@@ -103,7 +103,7 @@ service:
   # -- Service target port
   targetPort: 7575
   # -- Node port
-  nodePort: 30000
+  nodePort: 32000
 
 # -- Ingress configuration
 ingress:
@@ -157,7 +157,7 @@ autoscaling:
 persistence:
   - name: homarr-config
     # -- Enable homarr-config persistent storage
-    enabled: false
+    enabled: true
     # -- homarr-config storage class name
     storageClassName: "local-path"
     # -- homarr-config access mode

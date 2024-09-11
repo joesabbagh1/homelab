@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: actual
+  name: actual
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: actual
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: actual
+    spec:
+      containers:
+      - image: actualbudget/actual-server
+        name: actual-server
+        ports:
+          - containerPort: 5006
