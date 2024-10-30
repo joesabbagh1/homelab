@@ -1,9 +1,0 @@
-service:
-  type: NodePort
-  ports:
-    - port: 9090
-      targetPort: 9090
-      nodePort: 30100
-
-username: joe
-password: joe
