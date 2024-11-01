@@ -9,7 +9,7 @@ data:
   kubernetes.yaml: |
     mode: cluster
   settings.yaml: |
-    title: Gandalf Dev Cluster Homepage
+    title: Homelab Talos Cluster Homepage
     theme: dark
     color: slate
     layout:
@@ -39,57 +39,36 @@ data:
     - Personal Blog:
         - Blog:
             - abbr: bl
-              href: https://alfonsofortunato.com
+              href: https://blog.joehomelab.com
               icon: si-devpost-#003E54
     - Socials:
         - Github:
             - abbr: GH
-              href: https://github.com/MovieMaker93
+              href: https://github.com/joesabbagh1
               icon: github-light.png
         - Linkedin:
             - abbr: LN
-              href: https://www.linkedin.com/in/alfonso-fortunato-a37056b9/
+              href: https://www.linkedin.com/in/joe-sabbagh-37912a228/
               icon: linkedin.png
-        - Twitter:
-            - abbr: X
-              href: https://x.com/devopsfortunato
-              icon: mdi-twitter
-        - Medium:
-            - abbr: M
-              href: https://medium.com/@alfor93
-              icon: si-medium-#000000
-        - Reddit:
-            - abbr: M
-              href: https://reddit.com/
-              icon: reddit.png
   services.yaml: |
     - Apps:
-        - Wallabag:
-            href: https://wallabag.alfonsofortunato.net/
-            description: Wallabag
-            icon: si-wallabag-#3F6184
-        - Commafeed:
-            href: https://commafeed.alfonsofortunato.net/
-            description: Commafeed
-            icon: commafeed.png
+        # - Wallabag:
+        #     href: https://wallabag.alfonsofortunato.net/
+        #     description: Wallabag
+        #     icon: si-wallabag-#3F6184
         - Linkding:
-            href: https://linkding.alfonsofortunato.net/
+            href: https://linkding.joehomelab.net/
             description: Linkding
             icon: linkding.png
         - Excalidraw:
-            href: https://excalidraw.alfonsofortunato.net/
+            href: https://excalidraw.joehomelab.net/
             description: Excalidraw
             icon: excalidraw-light.png
     - Monitoring:
         - Grafana:
-            href: https://grafana-dev.alfonsofortunato.net/
+            href: https://grafana.joehomelab.net/
             description: Grafana dashboard
             icon: grafana.png
-            widget:
-              type: grafana
-              url: https://grafana-dev.alfonsofortunato.net
-              username: admin
-              password: strongpassword
   widgets.yaml: |
     - kubernetes:
         cluster:
