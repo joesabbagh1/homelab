@@ -57,16 +57,16 @@ data:
         #     description: Wallabag
         #     icon: si-wallabag-#3F6184
         - Linkding:
-            href: https://linkding.joehomelab.net/
+            href: https://linkding.joehomelab.cc/
             description: Linkding
             icon: linkding.png
         - Excalidraw:
-            href: https://excalidraw.joehomelab.net/
+            href: https://excalidraw.joehomelab.cc/
             description: Excalidraw
             icon: excalidraw-light.png
     - Monitoring:
         - Grafana:
-            href: https://grafana.joehomelab.net/
+            href: https://grafana.joehomelab.cc/
             description: Grafana dashboard
             icon: grafana.png
   widgets.yaml: |
