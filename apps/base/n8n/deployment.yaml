@@ -30,7 +30,7 @@ spec:
           #       name: n8n-container-env
 
           ports:
-            - containerPort: 3008
+            - containerPort: 5678
               protocol: TCP
 
           volumeMounts:
