@@ -23,6 +23,10 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
 
+          env:
+            - name: N8N_SECURE_COOKIE
+              value: "false"
+
           # envFrom:
           #   - configMapRef:
           #       name: n8n-configmap
