@@ -3,10 +3,8 @@ kind: Service
 metadata:
   name: n8n
 spec:
-  type: NodePort
   ports:
     - port: 3008
-      targetPort: 3008
-      nodePort: 32538
   selector:
     app: n8n
+  type: ClusterIP
