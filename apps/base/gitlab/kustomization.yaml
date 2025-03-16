@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: gitlab
 resources:
   - helm.yaml
+  - namespace.yaml
