@@ -11,7 +11,7 @@ spec:
       version: "*"
       sourceRef:
         kind: HelmRepository
-        name: gitlabRepo
+        name: gitlab-repo
         namespace: gitlab
       interval: 10m
   values:
