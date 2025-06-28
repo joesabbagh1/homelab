@@ -4,7 +4,5 @@ namespace: commafeed
 resources:
   - service.yaml
   - cloudflared.yaml
-  - pvc.yaml
-  - pv.yaml
   - deployment.yaml
   - namespace.yaml
