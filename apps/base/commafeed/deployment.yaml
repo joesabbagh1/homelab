@@ -19,3 +19,10 @@ spec:
           name: commafeed
           ports:
             - containerPort: 8082
+          volumeMounts:
+            - name: commafeed-volume
+              mountPath: /commafeed/data
+      volumes:
+        - name: commafeed-volume
+          persistentVolumeClaim:
+            claimName: commafeed-pvc

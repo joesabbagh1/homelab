@@ -6,3 +6,4 @@ resources:
   - cloudflared.yaml
   - deployment.yaml
   - namespace.yaml
+  - pvc.yaml
