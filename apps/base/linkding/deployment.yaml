@@ -7,15 +7,19 @@ spec:
   selector:
     matchLabels:
       app: linkding
+  strategy:
+    type: RollingUpdate
+    maxUnavailable: 0
+    maxSurge: 1
   template:
     metadata:
       labels:
         app: linkding
     spec:
       securityContext:
-        fsGroup: 33 # www-data group ID
-        runAsUser: 33 # www-data user ID
-        runAsGroup: 33 # www-data group ID
+        fsGroup: 33
+        runAsUser: 33
+        runAsGroup: 33
 
       containers:
         - name: linkding
@@ -25,6 +29,30 @@ spec:
 
           securityContext:
             allowPrivilegeEscalation: false
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9090
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9090
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              failureThreshold: 3
+
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
 
           volumeMounts:
             - name: linkding-data
