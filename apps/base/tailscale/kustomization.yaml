@@ -6,3 +6,4 @@ resources:
   - ./operator-oauth.yaml
   - ./tailscale-operator.yaml
   - ./cluster-issuer.yaml
+  - ./operator-rbac.yaml

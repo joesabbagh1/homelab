@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tailscale-operator-cert-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-edit # This built-in role allows managing certs
+subjects:
+  - kind: ServiceAccount
+    name: tailscale-operator
+    namespace: tailscale
