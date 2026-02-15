@@ -1,8 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: n8n
+namespace: cert-manager
 resources:
   - ./namespace.yaml
   - ./HelmRelease.yaml
-  - ./tailscale-auth-secret.yaml
   - ./operator-cert-manager-rbac.yaml
