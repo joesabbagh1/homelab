@@ -5,6 +5,6 @@ resources:
   - namespace.yaml
   - ./operator-oauth.yaml
   - ./tailscale-operator.yaml
-  # - ./cluster-issuer.yaml
+  - ./cluster-issuer.yaml
   - ./operator-rbac.yaml
-  # - ./tailscale-auth-secret.yaml
+  - ./tailscale-auth-secret.yaml
