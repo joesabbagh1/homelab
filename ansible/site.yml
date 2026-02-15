@@ -1,69 +1,222 @@
 ---
-# PLAY 1: SETUP MASTER (NODE 1)
-- name: Setup K3s Master
+- name: Nuclear Wipe K3s & Install Kubeadm
+  hosts: k8s
+  become: true
+  vars:
+    k8s_version: "v1.31"
+  tasks:
+    # --- PHASE 1: THE NUCLEAR WIPE ---
+    - name: Purge K3s and K8s remnants
+      shell: |
+        if [ -f /usr/local/bin/k3s-uninstall.sh ]; then /usr/local/bin/k3s-uninstall.sh; fi
+        if [ -f /usr/local/bin/k3s-agent-uninstall.sh ]; then /usr/local/bin/k3s-agent-uninstall.sh; fi
+        kubeadm reset -f || true
+        rm -rf /etc/rancher /var/lib/rancher /var/lib/kubelet /etc/kubernetes /var/lib/etcd /etc/cni/net.d $HOME/.kube
+        ip link delete cni0 || true
+        ip link delete flannel.1 || true
+        iptables -F && iptables -t nat -F && iptables -X
+      ignore_errors: true
+
+    # --- PHASE 2: OS PREPARATION ---
+    - name: Disable SWAP
+      shell: |
+        swapoff -a
+        sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+    - name: Load Kernel Modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop: ["overlay", "br_netfilter"]
+
+    - name: Configure Sysctl for Networking
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+      loop:
+        - { name: "net.bridge.bridge-nf-call-iptables", value: "1" }
+        - { name: "net.ipv4.ip_forward", value: "1" }
+
+    - name: Install and Configure containerd
+      apt:
+        name: containerd
+        state: present
+        update_cache: yes
+
+    - name: Force SystemdCgroup in containerd
+      shell: |
+        mkdir -p /etc/containerd
+        containerd config default > /etc/containerd/config.toml
+        sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+        systemctl restart containerd
+      changed_when: true
+
+    # --- PHASE 3: K8S TOOLING ---
+    - name: Install dependencies
+      apt:
+        name: ["apt-transport-https", "ca-certificates", "curl", "gpg"]
+        state: present
+
+    - name: Add Kubernetes Repository & Tools
+      shell: |
+        mkdir -p /etc/apt/keyrings
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ k8s_version }}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg --yes
+        echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ k8s_version }}/deb/ /' > /etc/apt/sources.list.d/kubernetes.list
+
+    - name: Unhold and Upgrade K8s Binaries
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: install
+      loop: ["kubelet", "kubeadm", "kubectl"]
+
+    - name: Install latest K8s Binaries
+      apt:
+        name: ["kubelet", "kubeadm", "kubectl"]
+        state: latest
+        update_cache: yes
+
+    - name: Hold K8s versions
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop: ["kubelet", "kubeadm", "kubectl"]
+
+  handlers:
+    - name: restart containerd
+      service:
+        name: containerd
+        state: restarted
+
+# --- PHASE 4: MASTER INITIALIZATION & CONFIG FETCH ---
+- name: Init Master
   hosts: master
   become: true
   tasks:
-    - name: Install K3s on Master
-      shell: curl -sfL https://get.k3s.io | sh -
+    - name: Kubeadm Init
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.0.10
       args:
-        creates: /usr/local/bin/k3s
+        creates: /etc/kubernetes/admin.conf
 
-    - name: Wait for token generation
+    - name: Wait for API Server to be ready
       wait_for:
-        path: /var/lib/rancher/k3s/server/node-token
+        host: 192.168.0.10
+        port: 6443
+        delay: 10
+        timeout: 120
 
-    - name: Read token
-      command: cat /var/lib/rancher/k3s/server/node-token
-      register: master_token_output
-      changed_when: false
+    - name: Setup local kubeconfig for Master user
+      shell: |
+        rm -rf $HOME/.kube
+        mkdir -p $HOME/.kube
+        cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+        chown $(id -u):$(id -g) $HOME/.kube/config
 
-    - name: Store token in memory
-      add_host:
-        name: "K3S_HOLDER"
-        token: "{{ master_token_output.stdout }}"
-
-    # THE PERMISSIONS FIX
-    - name: Create local .kube directory
-      file:
-        path: "/home/{{ ansible_user }}/.kube"
-        state: directory
-        owner: "{{ ansible_user }}"
-        mode: "0755"
-
-    - name: Copy config to user home
-      copy:
-        src: /etc/rancher/k3s/k3s.yaml
-        dest: "/home/{{ ansible_user }}/.kube/config"
-        remote_src: yes
-        owner: "{{ ansible_user }}"
-        mode: "0600"
-
-    - name: Set KUBECONFIG in .bashrc
-      lineinfile:
-        path: "/home/{{ ansible_user }}/.bashrc"
-        line: "export KUBECONFIG=$HOME/.kube/config"
-
-    # PULL TO MACBOOK
-    - name: Fetch config to MacBook
+    - name: Fetch kubeconfig to MacBook
       fetch:
-        src: /etc/rancher/k3s/k3s.yaml
+        src: /etc/kubernetes/admin.conf
         dest: ~/.kube/config-homelab
         flat: yes
-    - name: Replace localhost with Master IP in kubeconfig
-      replace:
-        path: /home/{{ ansible_user }}/.kube/config
-        regexp: "127.0.0.1"
-        replace: "192.168.0.10"
 
-# PLAY 2: SETUP WORKERS (NODE 2 & 3)
-- name: Setup K3s Workers
+    - name: Generate Join Command
+      command: kubeadm token create --print-join-command
+      register: join_cmd
+      until: join_cmd is not failed
+      retries: 6
+      delay: 15
+
+    - name: Set Join Command Fact
+      add_host:
+        name: "KUBE_JOIN_HOLDER"
+        command: "{{ join_cmd.stdout }}"
+
+# --- PHASE 5: WORKER JOIN ---
+- name: Join Workers
   hosts: workers
   become: true
+  serial: 1
   tasks:
-    - name: Join Workers to Cluster
-      shell: |
-        curl -sfL https://get.k3s.io | K3S_URL=https://192.168.0.10:6443 \
-        K3S_TOKEN={{ hostvars['K3S_HOLDER']['token'] }} sh -
+    - name: Join Cluster
+      command: "{{ hostvars['KUBE_JOIN_HOLDER']['command'] }}"
       args:
-        creates: /usr/local/bin/k3s
+        creates: /etc/kubernetes/kubelet.conf
+
+# --- PHASE 6: MACBOOK LOCAL CONFIG ---
+- name: Configure MacBook Environment
+  hosts: mac
+  connection: local
+  tasks:
+    - name: Update IP in local kubeconfig
+      replace:
+        path: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
+        regexp: '127\.0\.0\.1:6443'
+        replace: "192.168.0.10:6443"
+
+    - name: Add KUBECONFIG to .zshrc
+      lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.zshrc"
+        line: "export KUBECONFIG=$HOME/.kube/config-homelab"
+        state: present
+
+# --- PHASE 7: CLUSTER ADD-ONS ---
+- name: Install Cluster Add-ons
+  hosts: localhost
+  connection: local
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+    - name: Install Flannel Networking
+      kubernetes.core.k8s:
+        definition: "{{ lookup('url', 'https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml', split_lines=False) }}"
+        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
+        state: present
+
+    - name: Wait for Nodes to report Ready
+      shell: "kubectl --kubeconfig={{ lookup('env', 'HOME') }}/.kube/config-homelab get nodes"
+      register: nodes_ready
+      until: '" Ready" in nodes_ready.stdout'
+      retries: 20
+      delay: 10
+
+    - name: Label Worker Nodes
+      command: "kubectl --kubeconfig={{ lookup('env', 'HOME') }}/.kube/config-homelab label node {{ item }} node-role.kubernetes.io/worker=worker --overwrite"
+      loop: "{{ groups['workers'] }}"
+
+    - name: Install Local Path Provisioner
+      kubernetes.core.k8s:
+        definition: "{{ lookup('url', 'https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml', split_lines=False) }}"
+        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
+        state: present
+
+    - name: Set Local Path as Default Storage Class
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: storage.k8s.io/v1
+          kind: StorageClass
+          metadata:
+            name: local-path
+            annotations:
+              storageclass.kubernetes.io/is-default-class: "true"
+        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
+        state: present
+
+    - name: Add Traefik Helm repo
+      kubernetes.core.helm_repository:
+        name: traefik
+        repo_url: "https://traefik.github.io/charts"
+
+    - name: Install Traefik via Helm
+      kubernetes.core.helm:
+        name: traefik
+        chart_ref: traefik/traefik
+        release_namespace: traefik
+        create_namespace: true
+        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
+        values:
+          service:
+            type: NodePort
+          ports:
+            web:
+              nodePort: 30080
+            websecure:
+              nodePort: 30443
