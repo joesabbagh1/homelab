@@ -1,14 +1,28 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-repos
+  namespace: flux-system
+spec:
+  interval: 1h
+  path: ./infrastructure/helm # for repos
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: apps
   namespace: flux-system
 spec:
-  interval: 1m0s
-  # dependsOn:
-  #   - name: infra-configs
-  retryInterval: 1m
-  timeout: 5m
+  dependsOn:
+    - name: infrastructure-repos # This ensures Repos exist before Apps try to use them
+  interval: 1m
+  path: ./apps/production
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -16,5 +30,3 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
-  path: ./apps/production
-  prune: true
