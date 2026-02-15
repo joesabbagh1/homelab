@@ -22,3 +22,4 @@ spec:
     installer:
       proxy:
         type: "userspace"
+    domain: "tail911e5b.ts.net"
