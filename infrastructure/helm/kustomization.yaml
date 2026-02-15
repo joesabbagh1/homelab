@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - ./tailscale-repo.yaml
+  - ./cert-manager-repo.yaml

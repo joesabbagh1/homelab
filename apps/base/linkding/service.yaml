@@ -2,11 +2,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: linkding
+  namespace: linkding
+  annotations:
+    tailscale.com/expose: "true"
+    tailscale.com/hostname: "linkding"
+    # This line is the magic for HTTPS
+    tailscale.com/tls-cert: "true"
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
-    - port: 9090
-      targetPort: 9090
-      nodePort: 32536
+    - port: 443
+      targetPort: 9090 # The port your app actually runs on
+      protocol: TCP
+      name: https
   selector:
     app: linkding
