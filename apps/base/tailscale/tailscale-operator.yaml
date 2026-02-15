@@ -19,3 +19,6 @@ spec:
     operatorConfig:
       defaultTags:
         - "tag:k8s-operator"
+    installer:
+      proxy:
+        type: "userspace"

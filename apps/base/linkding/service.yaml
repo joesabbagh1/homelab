@@ -9,6 +9,7 @@ metadata:
     tailscale.com/tls-cert: "true"
     tailscale.com/tls-issuer: "tailscale-issuer"
     tailscale.com/tags: "tag:k8s-operator"
+    cert-manager.io/cluster-issuer: "tailscale-issuer"
 spec:
   type: ClusterIP
   ports:
