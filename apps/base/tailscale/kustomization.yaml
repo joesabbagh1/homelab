@@ -7,4 +7,4 @@ resources:
   - ./tailscale-operator.yaml
   - ./cluster-issuer.yaml
   - ./operator-rbac.yaml
-  - ./tailscale-auth-secret.yaml
+  # - ./tailscale-auth-secret.yaml
