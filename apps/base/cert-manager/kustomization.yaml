@@ -4,3 +4,4 @@ namespace: n8n
 resources:
   - ./namespace.yaml
   - ./HelmRelease.yaml
+  - ./tailscale-auth-secret.yaml
