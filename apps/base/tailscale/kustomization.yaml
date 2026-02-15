@@ -6,4 +6,3 @@ resources:
   - ./tailscale-operator.yaml
   - ./cluster-issuer.yaml
   - ./operator-rbac.yaml
-  - ./linkding-cert.yaml
