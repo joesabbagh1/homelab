@@ -6,8 +6,8 @@ metadata:
   annotations:
     tailscale.com/expose: "true"
     tailscale.com/hostname: "linkding"
-    # This line is the magic for HTTPS
     tailscale.com/tls-cert: "true"
+    tailscale.com/tags: "tag:k8s-operator"
 spec:
   type: ClusterIP
   ports:
