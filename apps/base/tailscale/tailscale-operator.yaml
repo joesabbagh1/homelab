@@ -19,6 +19,13 @@ spec:
     operatorConfig:
       defaultTags:
         - "tag:k8s-operator"
+    # This ensures the ServiceAccount name matches what we see in the cluster
+    serviceAccount:
+      operator:
+        name: operator
+    # Required to trigger internal TLS/Cert management
+    apiServerProxyConfig:
+      mode: "true"
     installer:
       proxy:
         type: "userspace"
