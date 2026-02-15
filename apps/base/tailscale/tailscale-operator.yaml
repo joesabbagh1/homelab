@@ -16,3 +16,6 @@ spec:
   values:
     oauth:
       secretName: operator-oauth
+    operatorConfig:
+      defaultTags:
+        - "tag:k8s-operator"
