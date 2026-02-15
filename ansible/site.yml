@@ -1,0 +1,69 @@
+---
+# PLAY 1: SETUP MASTER (NODE 1)
+- name: Setup K3s Master
+  hosts: master
+  become: true
+  tasks:
+    - name: Install K3s on Master
+      shell: curl -sfL https://get.k3s.io | sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Wait for token generation
+      wait_for:
+        path: /var/lib/rancher/k3s/server/node-token
+
+    - name: Read token
+      command: cat /var/lib/rancher/k3s/server/node-token
+      register: master_token_output
+      changed_when: false
+
+    - name: Store token in memory
+      add_host:
+        name: "K3S_HOLDER"
+        token: "{{ master_token_output.stdout }}"
+
+    # THE PERMISSIONS FIX
+    - name: Create local .kube directory
+      file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: directory
+        owner: "{{ ansible_user }}"
+        mode: "0755"
+
+    - name: Copy config to user home
+      copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "/home/{{ ansible_user }}/.kube/config"
+        remote_src: yes
+        owner: "{{ ansible_user }}"
+        mode: "0600"
+
+    - name: Set KUBECONFIG in .bashrc
+      lineinfile:
+        path: "/home/{{ ansible_user }}/.bashrc"
+        line: "export KUBECONFIG=$HOME/.kube/config"
+
+    # PULL TO MACBOOK
+    - name: Fetch config to MacBook
+      fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: ~/.kube/config-homelab
+        flat: yes
+    - name: Replace localhost with Master IP in kubeconfig
+      replace:
+        path: /home/{{ ansible_user }}/.kube/config
+        regexp: "127.0.0.1"
+        replace: "192.168.0.10"
+
+# PLAY 2: SETUP WORKERS (NODE 2 & 3)
+- name: Setup K3s Workers
+  hosts: workers
+  become: true
+  tasks:
+    - name: Join Workers to Cluster
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL=https://192.168.0.10:6443 \
+        K3S_TOKEN={{ hostvars['K3S_HOLDER']['token'] }} sh -
+      args:
+        creates: /usr/local/bin/k3s
