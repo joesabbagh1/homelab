@@ -3,5 +3,8 @@ kind: ClusterIssuer
 metadata:
   name: tailscale-issuer
 spec:
-  ca:
-    secretName: tailscale-auth # The operator handles this automatically
+  # The Tailscale operator provides this 'out-of-tree' issuer
+  issuerRef:
+    group: tailscale.com
+    kind: TailscaleIssuer
+    name: default # Usually 'default' or matches your operator config
