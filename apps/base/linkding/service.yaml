@@ -7,6 +7,7 @@ metadata:
     tailscale.com/expose: "true"
     tailscale.com/hostname: "linkding"
     tailscale.com/tls-cert: "true"
+    tailscale.com/tls-issuer: "tailscale-issuer"
     tailscale.com/tags: "tag:k8s-operator"
 spec:
   type: ClusterIP
