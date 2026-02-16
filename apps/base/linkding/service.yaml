@@ -3,13 +3,6 @@ kind: Service
 metadata:
   name: linkding
   namespace: linkding
-  annotations:
-    tailscale.com/expose: "true"
-    tailscale.com/hostname: "linkding"
-    tailscale.com/tls-cert: "true"
-    tailscale.com/tls-issuer: "tailscale-issuer"
-    tailscale.com/tags: "tag:k8s-operator"
-    cert-manager.io/cluster-issuer: "tailscale-issuer"
 spec:
   type: ClusterIP
   ports:

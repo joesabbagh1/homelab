@@ -1,9 +1,0 @@
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: tailscale-issuer
-  annotations:
-    tailscale.com/managed: "true"
-spec:
-  ca:
-    secretName: tailscale-auth # The operator handles this automatically

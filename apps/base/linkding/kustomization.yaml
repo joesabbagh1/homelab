@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: linkding
 resources:
   - service.yaml
-  - ./linkding-cert.yaml
   - cloudflared.yaml
   - pvc.yaml
   - deployment.yaml

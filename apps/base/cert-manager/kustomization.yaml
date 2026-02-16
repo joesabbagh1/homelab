@@ -4,4 +4,3 @@ namespace: cert-manager
 resources:
   - ./namespace.yaml
   - ./HelmRelease.yaml
-  - ./operator-cert-manager-rbac.yaml
