@@ -17,34 +17,25 @@ spec:
     oauth:
       secretName: operator-oauth
 
-    # 1. Newest Chart version location
-    proxyConfig:
-      managedCA: true
-
-    # 2. Older Chart version location
     operatorConfig:
-      managedCA: true
+      hostname: "tailscale-operator"
       defaultTags:
         - "tag:k8s-operator"
+      # This is how we force the flags since the chart lacks direct fields
+      extraEnv:
+        - name: OPERATOR_MANAGE_CA
+          value: "true"
+        - name: OPERATOR_HOSTNAME
+          value: "tailscale-operator"
 
-    # 3. Direct Environment Override (The "Sure Thing")
-    extraEnv:
-      - name: OPERATOR_MANAGE_CA
-        value: "true"
-      - name: OPERATOR_HOSTNAME
-        value: "tailscale-operator"
+    # apiServerProxyConfig is in its own block in the official values
+    apiServerProxyConfig:
+      mode: "true"
 
-    # Ensure the chart handles its own base RBAC
-    rbac:
-      create: true
-      createClusterRole: true
-
+    # Service Account config matches your cluster
     serviceAccount:
       operator:
         name: operator
-
-    apiServerProxyConfig:
-      mode: "true"
 
     installer:
       proxy:
