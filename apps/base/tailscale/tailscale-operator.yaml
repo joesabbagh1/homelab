@@ -19,6 +19,11 @@ spec:
     operatorConfig:
       defaultTags:
         - "tag:k8s-operator"
+    proxyConfig:
+      managedCA: true
+    # Ensures the operator has necessary cluster-wide RBAC
+    rbac:
+      createClusterRole: true
     # This ensures the ServiceAccount name matches what we see in the cluster
     serviceAccount:
       operator:
