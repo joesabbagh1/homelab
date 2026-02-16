@@ -16,22 +16,38 @@ spec:
   values:
     oauth:
       secretName: operator-oauth
-    operatorConfig:
-      defaultTags:
-        - "tag:k8s-operator"
+
+    # 1. Newest Chart version location
     proxyConfig:
       managedCA: true
-    # Ensures the operator has necessary cluster-wide RBAC
+
+    # 2. Older Chart version location
+    operatorConfig:
+      managedCA: true
+      defaultTags:
+        - "tag:k8s-operator"
+
+    # 3. Direct Environment Override (The "Sure Thing")
+    extraEnv:
+      - name: OPERATOR_MANAGE_CA
+        value: "true"
+      - name: OPERATOR_HOSTNAME
+        value: "tailscale-operator"
+
+    # Ensure the chart handles its own base RBAC
     rbac:
+      create: true
       createClusterRole: true
-    # This ensures the ServiceAccount name matches what we see in the cluster
+
     serviceAccount:
       operator:
         name: operator
-    # Required to trigger internal TLS/Cert management
+
     apiServerProxyConfig:
       mode: "true"
+
     installer:
       proxy:
         type: "userspace"
+
     domain: "tail911e5b.ts.net"
