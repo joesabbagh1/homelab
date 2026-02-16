@@ -29,6 +29,8 @@ spec:
       extraEnv:
         - name: OPERATOR_MANAGE_CA
           value: "true"
+        - name: OPERATOR_DOMAIN
+          value: "tail911e5b.ts.net"
         - name: OPERATOR_HOSTNAME
           value: "tailscale-operator"
 
