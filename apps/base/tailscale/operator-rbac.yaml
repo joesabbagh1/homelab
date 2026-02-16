@@ -4,7 +4,11 @@ metadata:
   name: tailscale-operator-cert-manager-signer
 rules:
   - apiGroups: ["cert-manager.io"]
-    resources: ["certificaterequests", "certificaterequests/status"]
+    resources:
+      - "certificaterequests"
+      - "certificaterequests/status"
+      - "certificaterequests/finalizers"
+      - "clusterissuers"
     verbs: ["get", "list", "watch", "update", "patch", "create"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
