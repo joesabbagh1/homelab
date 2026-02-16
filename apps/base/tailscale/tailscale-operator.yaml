@@ -21,6 +21,7 @@ spec:
     operatorConfig:
       extraArgs:
         - --managed-ca=true
+      domain: "tail911e5b.ts.net"
       hostname: "tailscale-operator"
       defaultTags:
         - "tag:k8s-operator"
