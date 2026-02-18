@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: jellyfin
 resources:
   - service.yaml
-  - cloudflared.yaml
+  - ingress.yaml
   - pvc.yaml
   - pv.yaml
   - deployment.yaml

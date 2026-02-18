@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: linkding
 resources:
   - service.yaml
-  - cloudflared.yaml
+  - ingress.yaml
   - pvc.yaml
   - deployment.yaml
   - namespace.yaml

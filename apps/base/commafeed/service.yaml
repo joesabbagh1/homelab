@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: commafeed
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - port: 8082
       targetPort: 8082
-      nodePort: 30006
   selector:
     app: commafeed

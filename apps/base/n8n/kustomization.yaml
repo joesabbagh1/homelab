@@ -5,5 +5,5 @@ resources:
   - namespace.yaml
   - service.yaml
   - deployment.yaml
-  - cloudflared.yaml
+  - ingress.yaml
   - storage.yaml

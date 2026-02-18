@@ -1,0 +1,27 @@
+# ClusterIssuer for Let's Encrypt using Cloudflare DNS-01 challenge.
+# DNS-01 does not require opening any ports to the internet—cert-manager
+# creates a TXT record in Cloudflare to prove domain ownership. Your home
+# network stays completely private.
+#
+# Prerequisite: Create the Cloudflare API token secret in cert-manager namespace:
+#   kubectl create secret generic cloudflare-dns-api-token -n cert-manager \
+#     --from-literal=api-token=YOUR_CLOUDFLARE_API_TOKEN
+#
+# Cloudflare token permissions: Zone:Zone:Read, Zone:DNS:Edit (include your zone(s)).
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-dns
+spec:
+  acme:
+    email: joe.sabbagh2001@gmail.com # Use your email for Let's Encrypt expiry notices
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-dns-acme-key
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-dns-api-token
+              key: api-token

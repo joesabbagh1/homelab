@@ -1,0 +1,31 @@
+# TLS via cert-manager (Cloudflare DNS-01). Traefik IngressRoute; local-only.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: n8n-tls
+  namespace: n8n
+spec:
+  secretName: n8n-tls
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - n8n.joehomelab.cc
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: n8n
+  namespace: n8n
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`n8n.joehomelab.cc`)
+      kind: Rule
+      services:
+        - name: n8n
+          port: 5678
+  tls:
+    secretName: n8n-tls

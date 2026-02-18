@@ -1,0 +1,32 @@
+# TLS via cert-manager (Cloudflare DNS-01). Traefik IngressRoute; local-only.
+# Ensure linkding.joesabbagh.com resolves to your cluster only in local DNS.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: linkding-tls
+  namespace: linkding
+spec:
+  secretName: linkding-tls
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - linkding.joesabbagh.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: linkding
+  namespace: linkding
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`linkding.joesabbagh.com`)
+      kind: Rule
+      services:
+        - name: linkding
+          port: 443
+  tls:
+    secretName: linkding-tls
