@@ -199,24 +199,3 @@
               storageclass.kubernetes.io/is-default-class: "true"
         kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
         state: present
-
-    - name: Add Traefik Helm repo
-      kubernetes.core.helm_repository:
-        name: traefik
-        repo_url: "https://traefik.github.io/charts"
-
-    - name: Install Traefik via Helm
-      kubernetes.core.helm:
-        name: traefik
-        chart_ref: traefik/traefik
-        release_namespace: traefik
-        create_namespace: true
-        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
-        values:
-          service:
-            type: NodePort
-          ports:
-            web:
-              nodePort: 30080
-            websecure:
-              nodePort: 30443
