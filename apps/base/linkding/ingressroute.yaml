@@ -24,6 +24,6 @@ spec:
       kind: Rule
       services:
         - name: linkding
-          port: 443
+          port: 9090
   tls:
     secretName: linkding-tls
