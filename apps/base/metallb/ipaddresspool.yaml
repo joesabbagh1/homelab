@@ -1,0 +1,9 @@
+# Edit addresses to a range in your LAN that is NOT used by DHCP.
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default
+  namespace: metallb
+spec:
+  addresses:
+    - 192.168.0.30-192.168.0.50

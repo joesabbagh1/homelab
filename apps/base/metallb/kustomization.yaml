@@ -4,3 +4,5 @@ namespace: metallb
 resources:
   - namespace.yaml
   - HelmRelease.yaml
+  - ipaddresspool.yaml
+  - l2advertisement.yaml
