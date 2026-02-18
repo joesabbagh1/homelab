@@ -4,3 +4,4 @@ namespace: flux-system
 resources:
   - ./cert-manager-repo.yaml
   - ./metallb-repo.yaml
+  - ./traefik-repo.yaml
