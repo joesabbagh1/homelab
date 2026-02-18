@@ -3,29 +3,29 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: commafeed-tls
-  namespace: commafeed
+  name: n8n-tls
+  namespace: n8n
 spec:
-  secretName: commafeed-tls
+  secretName: n8n-tls
   issuerRef:
     name: letsencrypt-dns
     kind: ClusterIssuer
   dnsNames:
-    - commafeed.joehomelab.cc
+    - n8n.joesabbagh.com
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: commafeed
-  namespace: commafeed
+  name: n8n
+  namespace: n8n
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`commafeed.joehomelab.cc`)
+    - match: Host(`n8n.joesabbagh.com`)
       kind: Rule
       services:
-        - name: commafeed
-          port: 8082
+        - name: n8n
+          port: 5678
   tls:
-    secretName: commafeed-tls
+    secretName: n8n-tls
