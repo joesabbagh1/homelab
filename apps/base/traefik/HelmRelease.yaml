@@ -18,6 +18,11 @@ spec:
   values:
     service:
       type: LoadBalancer
+    ingressRoute:
+      dashboard:
+        enabled: true # Automatically creates the internal routing rule
+        matchRule: Host(`traefik.joesabbagh.com`)
+        entryPoints: ["web"]
     ports:
       web:
         port: 8000 # Internal container port (Unprivileged)
