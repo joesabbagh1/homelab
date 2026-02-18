@@ -38,7 +38,7 @@ Edit `apps/base/cert-manager/cluster-issuer-cloudflare.yaml` and replace `replac
 So that only your LAN can reach your apps:
 
 - **Option A – Local DNS override**  
-  In your router, Pi-hole, AdGuard Home, or `/etc/hosts`, make your app hostnames resolve to your cluster’s IP (e.g. the node where Traefik’s NodePort is available, or a MetalLB/LoadBalancer IP):
+  In your router, **Pi-hole** (see [Pi-hole setup](pihole-setup.md); Pi-hole uses MetalLB for a stable DNS IP), AdGuard Home, or `/etc/hosts`, make your app hostnames resolve to your cluster’s IP (e.g. the node where Traefik’s NodePort is available, or Traefik’s MetalLB LoadBalancer IP). See [MetalLB setup](metallb-setup.md).
   - `linkding.joesabbagh.com` → cluster IP
   - `jellyfin.joesabbagh.com` → cluster IP
   - `commafeed.joesabbagh.com` → cluster IP
@@ -54,3 +54,91 @@ Result: from the internet, these hostnames either don’t resolve or don’t poi
 - Each app uses a **Certificate** (cert-manager) and a **Traefik IngressRoute** (not the standard Kubernetes Ingress). cert-manager issues and renews certificates; Traefik serves HTTPS on the `websecure` entryPoint using those secrets.
 - Certificates are stored in each app’s namespace and renewed automatically.
 - Access apps over HTTPS on the `websecure` port (e.g. NodePort 30443), using the hostnames above, only from inside your network.
+
+---
+
+## What to type in the browser
+
+Traefik is exposed as **NodePort 30443** (HTTPS). Use your **node IP** (the machine running Traefik) or the IP you use in local DNS.
+
+| App       | URL (replace `NODE_IP` with your node’s IP, e.g. `192.168.1.100`) |
+|-----------|--------------------------------------------------------------------|
+| Linkding  | `https://linkding.joesabbagh.com:30443`                            |
+| Jellyfin  | `https://jellyfin.joesabbagh.com:30443`                            |
+| Commafeed | `https://commafeed.joesabbagh.com:30443`                           |
+| n8n       | `https://n8n.joesabbagh.com:30443`                                 |
+
+**Prerequisites:**
+
+1. **Local DNS** – Each hostname must resolve to the node (or LoadBalancer) where Traefik is reachable. Test with:
+   ```bash
+   ping linkding.joesabbagh.com   # should show your node IP
+   ```
+2. You must use **HTTPS** (not HTTP). Port **30443** is the `websecure` NodePort.
+
+If you later use a reverse proxy or load balancer in front of Traefik on port 443, you can drop the `:30443` and use `https://linkding.joesabbagh.com` etc.
+
+---
+
+## If they don’t open: debugging
+
+### 1. DNS and connectivity
+
+```bash
+# Resolve hostname (must be your node/cluster IP)
+ping linkding.joesabbagh.com
+
+# Reach Traefik on HTTPS (from your laptop)
+curl -k -v https://linkding.joesabbagh.com:30443
+```
+
+If ping fails or goes to the wrong IP, fix local DNS (router, Pi-hole, or `/etc/hosts`). If curl times out, check firewall and that you’re using the correct node IP and port 30443.
+
+### 2. Traefik is running
+
+```bash
+kubectl get pods -n traefik
+kubectl get svc -n traefik   # should show NodePort 30443 for websecure
+```
+
+### 3. IngressRoutes and TLS
+
+```bash
+# IngressRoutes should exist and be used by Traefik
+kubectl get ingressroute -A
+
+# Certificates should be Ready
+kubectl get certificate -A
+# NAME            READY   SECRET          AGE
+# linkding-tls    True    linkding-tls    ...
+```
+
+If a certificate is not Ready:
+
+```bash
+kubectl describe certificate -n <namespace> <name>
+kubectl get challenges -A
+kubectl describe challenge -n <namespace> <challenge-name>
+```
+
+### 4. Backend services and pods
+
+```bash
+# Services exist and have endpoints
+kubectl get svc -n linkding
+kubectl get endpoints -n linkding
+
+# Pods are Running
+kubectl get pods -n linkding
+kubectl get pods -n jellyfin
+kubectl get pods -n commafeed
+kubectl get pods -n n8n
+```
+
+### 5. Traefik logs
+
+```bash
+kubectl logs -n traefik -l app.kubernetes.io/name=traefik -f --tail=100
+```
+
+Look for errors when you hit a URL (e.g. no route, TLS, or backend errors).
