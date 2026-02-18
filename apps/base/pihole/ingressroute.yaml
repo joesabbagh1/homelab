@@ -1,4 +1,3 @@
-# TLS via cert-manager (Cloudflare DNS-01). Admin UI at https://pihole.joesabbagh.com:30443
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
