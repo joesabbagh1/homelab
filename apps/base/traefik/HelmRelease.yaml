@@ -20,6 +20,8 @@ spec:
       type: LoadBalancer
     ports:
       web:
-        port: 80
+        port: 8000 # Internal container port (Unprivileged)
+        exposedPort: 80 # External LoadBalancer port (What browser uses)
       websecure:
-        port: 443
+        port: 8443 # Internal container port (Unprivileged)
+        exposedPort: 443 # External LoadBalancer port (What browser uses)
