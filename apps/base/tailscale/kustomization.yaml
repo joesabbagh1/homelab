@@ -4,4 +4,4 @@ namespace: tailscale
 resources:
   - namespace.yaml
   - HelmRelease.yaml
-  # - connector.yaml
+  - connector.yaml
