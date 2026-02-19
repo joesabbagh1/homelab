@@ -15,7 +15,7 @@ spec:
   interval: 1h
   targetNamespace: kube-system
   install:
-    crds: CreateReplace
+    crds: Create
   values:
     # Use node PodCIDR (matches kubeadm --pod-network-cidr=10.244.0.0/16)
     ipam:
