@@ -18,8 +18,8 @@ spec:
   values:
     service:
       type: LoadBalancer
-      # So Cilium LB IPAM + L2 announcement handle this service
-      loadBalancerClass: io.cilium/l2-announcer
+      # Cilium L2: Cluster so traffic can be forwarded to any node (avoids "local pod" drop when L2 lease is on same node as pod)
+      externalTrafficPolicy: Cluster
     ingressRoute:
       dashboard:
         enabled: true # Automatically creates the internal routing rule

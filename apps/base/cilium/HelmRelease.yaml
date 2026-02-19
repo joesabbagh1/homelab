@@ -23,9 +23,11 @@ spec:
     # L2 announcements for LoadBalancer IPs (MetalLB replacement)
     l2announcements:
       enabled: true
-    # Rate limit for L2 leader election API traffic
+    # Full socket LB (not hostNamespaceOnly) so LoadBalancer traffic forwards correctly to pods
     socketLB:
-      hostNamespaceOnly: true
+      hostNamespaceOnly: false
+    # Optional: if L2/forwarding fails, set your node's LAN interface (e.g. eth0, enp1s0)
+    # devices: ["eth0"]
     k8sClientRateLimit:
       qps: 100
       burst: 200
