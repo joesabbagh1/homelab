@@ -3,8 +3,14 @@ kind: CiliumL2AnnouncementPolicy
 metadata:
   name: default-l2
 spec:
-  loadBalancerIPs: true
+  # Select ALL nodes (no exclusion)
   nodeSelector:
-    matchExpressions:
-      - key: node-role.kubernetes.io/control-plane
-        operator: DoesNotExist
+    matchLabels: {}
+
+  # Target the specific interface found on your nodes
+  interfaces:
+    - enp1s0
+
+  # Announce both types of IPs
+  externalIPs: true
+  loadBalancerIPs: true
