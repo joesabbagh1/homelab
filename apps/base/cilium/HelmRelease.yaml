@@ -27,5 +27,7 @@ spec:
       enabled: true
     # Rate limit for L2 leader election API traffic
     k8sClientRateLimit:
-      qps: 25
-      burst: 50
+      qps: 100
+      burst: 200
+    k8sServiceHost: 192.168.0.10
+    k8sServicePort: 6443
