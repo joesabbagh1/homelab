@@ -18,6 +18,8 @@ spec:
   values:
     service:
       type: LoadBalancer
+      # Must match what's already on the Service (field is immutable). Keep this so Helm doesn't try to remove it.
+      loadBalancerClass: io.cilium/l2-announcer
     ingressRoute:
       dashboard:
         enabled: true # Automatically creates the internal routing rule
