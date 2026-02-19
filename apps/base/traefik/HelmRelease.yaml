@@ -18,10 +18,10 @@ spec:
   values:
     service:
       type: LoadBalancer
-      # Must match what's already on the Service (field is immutable). Keep this so Helm doesn't try to remove it.
-      loadBalancerClass: io.cilium/l2-announcer
-      # Cilium L2: allow forwarding to any node (avoids drop when L2 lease and pod are on same node)
-      externalTrafficPolicy: Cluster
+      spec:
+        loadBalancerIP: 192.168.0.31
+        # Cilium L2: allow forwarding to any node (avoids drop when L2 lease and pod are on same node)
+        externalTrafficPolicy: Cluster
     ingressRoute:
       dashboard:
         enabled: true # Automatically creates the internal routing rule

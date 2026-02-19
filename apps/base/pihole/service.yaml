@@ -4,6 +4,8 @@ metadata:
   name: pihole
 spec:
   type: LoadBalancer
+  loadBalancerIP: 192.168.0.30
+  externalTrafficPolicy: Cluster
   ports:
     - port: 53
       targetPort: 53
