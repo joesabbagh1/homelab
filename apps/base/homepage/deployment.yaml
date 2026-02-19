@@ -26,6 +26,9 @@ spec:
         - name: homepage
           image: "ghcr.io/gethomepage/homepage:latest"
           imagePullPolicy: Always
+          env:
+            - name: HOMEPAGE_ALLOWED_HOSTS
+              value: "homepage.joesabbagh.com,localhost"
           ports:
             - name: http
               containerPort: 3000
