@@ -18,6 +18,8 @@ spec:
   values:
     service:
       type: LoadBalancer
+      # So Cilium LB IPAM + L2 announcement handle this service
+      loadBalancerClass: io.cilium/l2-announcer
     ingressRoute:
       dashboard:
         enabled: true # Automatically creates the internal routing rule

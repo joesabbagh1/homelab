@@ -4,8 +4,6 @@ metadata:
   name: default-l2
 spec:
   loadBalancerIPs: true
-  interfaces:
-    - ^enp1s0$
   nodeSelector:
     matchExpressions:
       - key: node-role.kubernetes.io/control-plane
