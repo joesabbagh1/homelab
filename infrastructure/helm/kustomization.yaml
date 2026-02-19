@@ -3,6 +3,6 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - ./cert-manager-repo.yaml
-  - ./metallb-repo.yaml
+  - ./cilium-repo.yaml
   - ./tailscale-repo.yaml
   - ./traefik-repo.yaml
