@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - HelmRelease.yaml
   - loadbalancerippool.yaml
-  - l2announcementpolicy.yaml
+  # - l2announcementpolicy.yaml
