@@ -15,18 +15,20 @@ spec:
   interval: 1h
   targetNamespace: kube-system
   values:
-    # Use node PodCIDR (matches kubeadm --pod-network-cidr=10.244.0.0/16)
+    tunnel: vxlan # Forces VXLAN encapsulation
+    routingMode: tunnel # Explicitly tells Cilium to use Tunneling (not Native)
+    autoDirectNodeRoutes: false # Disables direct routing (required for VXLAN)
+    mtu: 1450 # Lowers MTU to fit VXLAN headers (Prevents dropped packets)
+    ipv4:
+      masquerade: true # Ensures Pods can talk to the internet
+
     ipam:
       mode: kubernetes
-    # Replace kube-proxy (eBPF datapath)
     kubeProxyReplacement: true
-    # L2 announcements for LoadBalancer IPs (MetalLB replacement)
     l2announcements:
       enabled: true
-    # Full socket LB (not hostNamespaceOnly) so LoadBalancer traffic forwards correctly to pods
     socketLB:
       hostNamespaceOnly: false
-    # Devices for L2 announcements and NodePort/LoadBalancer (must match interfaces in L2 policy)
     devices: ["enp1s0"]
     k8sClientRateLimit:
       qps: 100
