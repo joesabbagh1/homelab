@@ -22,6 +22,7 @@ spec:
         loadBalancerIP: 192.168.0.31
         # Cilium L2: allow forwarding to any node (avoids drop when L2 lease and pod are on same node)
         externalTrafficPolicy: Cluster
+      loadBalancerClass: io.cilium/l2-announcer
     ingressRoute:
       dashboard:
         enabled: true # Automatically creates the internal routing rule
