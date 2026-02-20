@@ -23,11 +23,8 @@ spec:
     autoDirectNodeRoutes: false
     ipv4NativeRoutingCIDR: "" # Ensure this is empty
 
-    # This manually injects 'tunnel: vxlan' into the ConfigMap
-    # which forces the Agent to enable the 'cilium_vxlan' interface.
     extraConfig:
       tunnel: "vxlan"
-      enable-ipv4-masquerade: "true"
 
     # Lower MTU to allow room for VXLAN headers
     mtu: 1400
