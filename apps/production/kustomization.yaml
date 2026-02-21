@@ -11,3 +11,8 @@ resources:
   - pihole
   - tailscale
   - traefik
+  - qbittorrent
+  - prowlarr
+  - radarr
+  - sonarr
+  - bazarr

@@ -1,0 +1,31 @@
+# TLS via cert-manager (Cloudflare DNS-01). Traefik IngressRoute; local-only.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: radarr-tls
+  namespace: radarr
+spec:
+  secretName: radarr-tls
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - radarr.joesabbagh.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: radarr
+  namespace: radarr
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`radarr.joesabbagh.com`)
+      kind: Rule
+      services:
+        - name: radarr
+          port: 7878
+  tls:
+    secretName: radarr-tls
