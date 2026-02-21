@@ -165,12 +165,6 @@
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
   tasks:
-    - name: Install Flannel Networking
-      kubernetes.core.k8s:
-        definition: "{{ lookup('url', 'https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml', split_lines=False) }}"
-        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
-        state: present
-
     - name: Wait for Nodes to report Ready
       shell: "kubectl --kubeconfig={{ lookup('env', 'HOME') }}/.kube/config-homelab get nodes"
       register: nodes_ready
