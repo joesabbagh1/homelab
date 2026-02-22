@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - cilium
   - cert-manager
+  - metrics-server
   - commafeed
   - homepage
   - jellyfin
