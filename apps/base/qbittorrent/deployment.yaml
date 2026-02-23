@@ -19,6 +19,13 @@ spec:
       containers:
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:latest
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
           env:
             - name: PUID
               value: "1000"
