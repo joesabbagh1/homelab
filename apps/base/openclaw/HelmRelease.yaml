@@ -1,0 +1,36 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: openclaw
+  namespace: openclaw
+spec:
+  chart:
+    spec:
+      chart: openclaw
+      sourceRef:
+        kind: HelmRepository
+        name: openclaw
+        namespace: flux-system
+      version: "1.x"
+  interval: 1h
+  values:
+    openclaw:
+      timezone: "Europe/Paris"
+      bind: "lan"
+      agents:
+        defaults:
+          model: "google/gemini-2.5-flash"
+
+    credentials:
+      existingSecret: openclaw-credentials
+
+    # Disable built-in ingress — we use a Traefik IngressRoute instead
+    ingress:
+      enabled: false
+
+    persistence:
+      enabled: true
+      size: 5Gi
+
+    chromium:
+      enabled: true

@@ -4,7 +4,5 @@ namespace: openclaw
 resources:
   - namespace.yaml
   - secret.yaml
-  - service.yaml
-  - deployment.yaml
+  - HelmRelease.yaml
   - ingressroute.yaml
-  - storage.yaml
