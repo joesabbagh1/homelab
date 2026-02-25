@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openclaw
+spec:
+  replicas: 1
+  # Recreate because OpenClaw is single-instance only
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: openclaw
+  template:
+    metadata:
+      labels:
+        app: openclaw
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
+
+      containers:
+        - name: openclaw
+          image: ghcr.io/openclaw/openclaw:2026.2.19
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
+          env:
+            - name: OPENCLAW_BIND
+              value: "lan"
+            - name: TZ
+              value: "Europe/Paris"
+            # Gemini provider — using google/gemini-2.5-flash by default
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: GEMINI_API_KEY
+            # OpenClaw gateway token (auto-generated on first run if not set,
+            # but setting it here makes it stable across pod restarts)
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_GATEWAY_TOKEN
+
+          ports:
+            - name: gateway
+              containerPort: 18789
+              protocol: TCP
+            - name: canvas
+              containerPort: 18793
+              protocol: TCP
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+
+        # Chromium sidecar for browser/web automation
+        - name: chromium
+          image: zenika/alpine-chrome:124
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+
+      restartPolicy: Always
+
+      volumes:
+        - name: openclaw-data
+          persistentVolumeClaim:
+            claimName: openclaw-data
