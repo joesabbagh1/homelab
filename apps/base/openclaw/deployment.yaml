@@ -75,6 +75,13 @@ spec:
         # Chromium sidecar for browser/web automation
         - name: chromium
           image: zenika/alpine-chrome:124
+          args:
+            - --no-sandbox
+            - --headless
+            - --remote-debugging-port=9222
+            - --remote-debugging-address=0.0.0.0
+            - --disable-gpu
+            - --disable-dev-shm-usage
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
@@ -83,8 +90,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-            seccompProfile:
-              type: RuntimeDefault
           resources:
             requests:
               cpu: 100m
