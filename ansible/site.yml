@@ -176,20 +176,3 @@
       command: "kubectl --kubeconfig={{ lookup('env', 'HOME') }}/.kube/config-homelab label node {{ item }} node-role.kubernetes.io/worker=worker --overwrite"
       loop: "{{ groups['workers'] }}"
 
-    - name: Install Local Path Provisioner
-      kubernetes.core.k8s:
-        definition: "{{ lookup('url', 'https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml', split_lines=False) }}"
-        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
-        state: present
-
-    - name: Set Local Path as Default Storage Class
-      kubernetes.core.k8s:
-        definition:
-          apiVersion: storage.k8s.io/v1
-          kind: StorageClass
-          metadata:
-            name: local-path
-            annotations:
-              storageclass.kubernetes.io/is-default-class: "true"
-        kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/config-homelab"
-        state: present
