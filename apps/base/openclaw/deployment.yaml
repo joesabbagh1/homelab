@@ -33,11 +33,11 @@ spec:
             - |
               mkdir -p /home/node/.openclaw
               if [ ! -f /home/node/.openclaw/openclaw.json ]; then
-                echo '{"gateway":{"bind":"0.0.0.0"}}' > /home/node/.openclaw/openclaw.json
+                echo '{"gateway":{"bind":"lan"}}' > /home/node/.openclaw/openclaw.json
               else
                 # Merge bind setting into existing config using sed
                 if ! grep -q '"bind"' /home/node/.openclaw/openclaw.json; then
-                  sed -i 's/{/{"gateway":{"bind":"0.0.0.0"},/' /home/node/.openclaw/openclaw.json
+                  sed -i 's/{/{"gateway":{"bind":"lan"},/' /home/node/.openclaw/openclaw.json
                 fi
               fi
           securityContext:
