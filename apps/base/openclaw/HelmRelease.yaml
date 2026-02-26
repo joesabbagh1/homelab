@@ -20,6 +20,11 @@ spec:
       agents:
         defaults:
           model: "google/gemini-2.5-flash"
+      configOverrides:
+        channels:
+          telegram:
+            enabled: true
+            # Bot token read from TELEGRAM_BOT_TOKEN env var (injected via secret)
 
     credentials:
       existingSecret: openclaw-credentials
