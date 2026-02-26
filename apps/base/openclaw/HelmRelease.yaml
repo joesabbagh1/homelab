@@ -11,7 +11,7 @@ spec:
         kind: HelmRepository
         name: openclaw
         namespace: flux-system
-      version: "1.x"
+      version: "0.1.x"
   interval: 1h
   values:
     openclaw:
