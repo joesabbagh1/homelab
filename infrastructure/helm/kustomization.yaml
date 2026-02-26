@@ -6,5 +6,6 @@ resources:
   - ./cilium-repo.yaml
   - ./metrics-server-repo.yaml
   - ./openclaw-repo.yaml
+  - ./prometheus-community-repo.yaml
   - ./tailscale-repo.yaml
   - ./traefik-repo.yaml

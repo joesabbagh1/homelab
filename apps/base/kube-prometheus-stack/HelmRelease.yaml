@@ -1,0 +1,40 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+      version: "69.x" # Current latest 6X series
+  interval: 1h
+  values:
+    # Disable components we might not need immediately, or limit resources
+    grafana:
+      # We will expose Grafana via an external IngressRoute
+      ingress:
+        enabled: false
+      persistence:
+        type: pvc
+        enabled: true
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        size: 5Gi
+    prometheus:
+      prometheusSpec:
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: local-path
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 20Gi
+        retention: 15d
+        retentionSize: 18GB
