@@ -11,7 +11,7 @@ spec:
     name: letsencrypt-dns
     kind: ClusterIssuer
   dnsNames:
-    - registery.joesabbagh.com
+    - registry.joesabbagh.com
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -22,7 +22,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`registery.joesabbagh.com`)
+    - match: Host(`registry.joesabbagh.com`)
       kind: Rule
       services:
         - name: registry-docker-registry
