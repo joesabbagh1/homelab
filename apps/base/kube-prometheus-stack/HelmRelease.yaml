@@ -28,8 +28,6 @@ spec:
         size: 5Gi
     prometheus:
       prometheusSpec:
-        scrapeInterval: "5s"
-        evaluationInterval: "5s"
         storageSpec:
           volumeClaimTemplate:
             spec:
