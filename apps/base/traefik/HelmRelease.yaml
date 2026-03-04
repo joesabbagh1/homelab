@@ -16,6 +16,9 @@ spec:
   install:
     crds: CreateReplace
   values:
+    additionalArguments:
+      - "--entrypoints.websecure.transport.respondingTimeouts.readTimeout=1800s"
+      - "--entrypoints.websecure.transport.respondingTimeouts.writeTimeout=1800s"
     service:
       type: LoadBalancer
       spec:
