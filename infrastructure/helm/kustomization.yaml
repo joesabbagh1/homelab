@@ -9,3 +9,4 @@ resources:
   - ./prometheus-community-repo.yaml
   - ./tailscale-repo.yaml
   - ./traefik-repo.yaml
+  - ./twuni-repo.yaml
