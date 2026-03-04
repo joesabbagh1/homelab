@@ -4,3 +4,6 @@ namespace: registry
 resources:
   - ./namespace.yaml
   - ./HelmRelease.yaml
+  - ./ingressroute.yaml
+  - ./pv.yaml
+  - ./pvc.yaml

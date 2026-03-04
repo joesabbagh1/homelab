@@ -17,3 +17,9 @@ spec:
     # Optional base values, persistence disabled by default in generic helm charts
     # can be enabled later
     replicaCount: 1
+    persistence:
+      enabled: true
+      existingClaim: registry-data-pvc
+    nodeSelector:
+      kubernetes.io/hostname: node2
+

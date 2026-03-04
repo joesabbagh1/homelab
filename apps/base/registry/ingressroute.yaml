@@ -1,0 +1,31 @@
+# TLS via cert-manager (Cloudflare DNS-01). Traefik IngressRoute; local-only.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: registry-tls
+  namespace: registry
+spec:
+  secretName: registry-tls
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - registery.joesabbagh.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: registry
+  namespace: registry
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`registery.joesabbagh.com`)
+      kind: Rule
+      services:
+        - name: registry-docker-registry
+          port: 5000
+  tls:
+    secretName: registry-tls
