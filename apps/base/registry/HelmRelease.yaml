@@ -22,8 +22,6 @@ spec:
       existingClaim: registry-data-pvc
     nodeSelector:
       kubernetes.io/hostname: node2
-    configData:
-      reporting:
-        # Disable OTLP tracing export (no collector running in cluster)
-        serviceName: ""
+    env:
+      OTEL_TRACES_EXPORTER: "none"
 
