@@ -1,5 +1,15 @@
 # TLS via cert-manager (Cloudflare DNS-01). Traefik IngressRoute; local-only.
 ---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: registry-long-timeout
+  namespace: registry
+spec:
+  forwardingTimeouts:
+    readTimeout: 15m
+    idleConnTimeout: 15m
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -27,5 +37,6 @@ spec:
       services:
         - name: registry-docker-registry
           port: 5000
+          serversTransport: registry-long-timeout
   tls:
     secretName: registry-tls
