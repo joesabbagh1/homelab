@@ -21,7 +21,12 @@ spec:
       enabled: true
       existingClaim: registry-data-pvc
     nodeSelector:
-      kubernetes.io/hostname: node2
+      kubernetes.io/hostname: node3
+    tolerations:
+      - key: "node-role.kubernetes.io/unschedulable"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
     resources:
       requests:
         cpu: 250m
