@@ -27,6 +27,9 @@ spec:
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
+      - key: "node.kubernetes.io/unschedulable"
+        operator: "Exists"
+        effect: "NoSchedule"
     resources:
       requests:
         cpu: 250m
