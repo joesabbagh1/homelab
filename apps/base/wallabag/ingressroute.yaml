@@ -1,0 +1,29 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wallabag-tls
+  namespace: wallabag
+spec:
+  secretName: wallabag-tls
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - wallabag.joesabbagh.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: wallabag
+  namespace: wallabag
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`wallabag.joesabbagh.com`)
+      kind: Rule
+      services:
+        - name: wallabag
+          port: 80
+  tls:
+    secretName: wallabag-tls

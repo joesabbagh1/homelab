@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallabag
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wallabag
+  strategy:
+    type: RollingUpdate
+    maxUnavailable: 0
+    maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: wallabag
+    spec:
+      containers:
+        - name: wallabag
+          image: wallabag/wallabag:2.6.14
+          ports:
+            - containerPort: 80
+
+          env:
+            - name: SYMFONY__ENV__DOMAIN_NAME
+              value: "https://wallabag.joesabbagh.com"
+            - name: SYMFONY__ENV__DATABASE_DRIVER
+              value: "pdo_sqlite"
+            - name: SYMFONY__ENV__SERVER_NAME
+              value: "wallabag.joesabbagh.com"
+
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          volumeMounts:
+            - name: wallabag-data
+              mountPath: /var/www/wallabag/data
+
+      volumes:
+        - name: wallabag-data
+          persistentVolumeClaim:
+            claimName: wallabag-data-pvc
