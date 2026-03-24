@@ -42,9 +42,7 @@ spec:
             - name: LD_DB_ENGINE
               value: "postgres"
             - name: LD_DB_HOST
-              value: "linkding-db-rw"
-            - name: LD_DB_PORT
-              value: "5432"
+              value: "linkding-db-rw.linkding.svc.cluster.local"
             - name: LD_DB_DATABASE
               value: "app"
             - name: LD_DB_USER
