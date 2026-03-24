@@ -57,3 +57,12 @@ spec:
                 secretKeyRef:
                   name: linkding-db-app
                   key: password
+
+          volumeMounts:
+            - name: linkding-data
+              mountPath: /etc/linkding/data
+
+      volumes:
+        - name: linkding-data
+          persistentVolumeClaim:
+            claimName: linkding-data-pvc
