@@ -33,6 +33,8 @@ spec:
 
     # --- L2 & KUBE-PROXY ---
     kubeProxyReplacement: "true"
+    bpf:
+      masquerade: true
     l2announcements:
       enabled: true
     socketLB:
