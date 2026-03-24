@@ -20,6 +20,8 @@ spec:
           ports:
             - containerPort: 8082
           env:
+            - name: CF_APP_PUBLIC_URL
+              value: "https://commafeed.joesabbagh.com"
             - name: QUARKUS_DATASOURCE_DB_KIND
               value: "postgresql"
             - name: QUARKUS_DATASOURCE_JDBC_URL
