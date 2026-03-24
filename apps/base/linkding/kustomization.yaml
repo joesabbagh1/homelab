@@ -4,6 +4,6 @@ namespace: linkding
 resources:
   - service.yaml
   - ingressroute.yaml
-  - pvc.yaml
+  - cluster.yaml
   - deployment.yaml
   - namespace.yaml

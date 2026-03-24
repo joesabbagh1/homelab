@@ -38,10 +38,22 @@ spec:
               memory: "256Mi"
               cpu: "500m"
 
-          volumeMounts:
-            - name: linkding-data
-              mountPath: /etc/linkding/data
-      volumes:
-        - name: linkding-data
-          persistentVolumeClaim:
-            claimName: linkding-data-pvc
+          env:
+            - name: LD_DB_ENGINE
+              value: "postgres"
+            - name: LD_DB_HOST
+              value: "linkding-db-rw"
+            - name: LD_DB_PORT
+              value: "5432"
+            - name: LD_DB_DATABASE
+              value: "app"
+            - name: LD_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-db-app
+                  key: username
+            - name: LD_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-db-app
+                  key: password
