@@ -4,6 +4,7 @@ namespace: flux-system
 resources:
   - ./cert-manager-repo.yaml
   - ./cilium-repo.yaml
+  - ./cnpg-repo.yaml
   - ./metrics-server-repo.yaml
   - ./openclaw-repo.yaml
   - ./prometheus-community-repo.yaml

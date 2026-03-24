@@ -15,14 +15,22 @@ spec:
         app: commafeed
     spec:
       containers:
-        - image: athou/commafeed:latest-h2
+        - image: athou/commafeed:latest-postgresql
           name: commafeed
           ports:
             - containerPort: 8082
-          volumeMounts:
-            - name: commafeed-volume
-              mountPath: /commafeed/data
-      volumes:
-        - name: commafeed-volume
-          persistentVolumeClaim:
-            claimName: commafeed-pvc
+          env:
+            - name: CF_DATABASE_DRIVERCLASS
+              value: "org.postgresql.Driver"
+            - name: CF_DATABASE_URL
+              value: "jdbc:postgresql://commafeed-db-rw:5432/app"
+            - name: CF_DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: commafeed-db-app
+                  key: username
+            - name: CF_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: commafeed-db-app
+                  key: password

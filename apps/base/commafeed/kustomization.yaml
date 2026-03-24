@@ -6,4 +6,4 @@ resources:
   - ingressroute.yaml
   - deployment.yaml
   - namespace.yaml
-  - pvc.yaml
+  - cluster.yaml
