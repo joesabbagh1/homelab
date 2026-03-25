@@ -21,6 +21,9 @@ spec:
         defaults:
           model: "google/gemini-2.5-flash"
       configOverrides:
+        gateway:
+          controlUi:
+            dangerouslyAllowHostHeaderOriginFallback: true
         channels:
           telegram:
             enabled: true
