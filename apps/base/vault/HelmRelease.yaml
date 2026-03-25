@@ -1,0 +1,52 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  releaseName: vault
+  chart:
+    spec:
+      chart: vault
+      sourceRef:
+        kind: HelmRepository
+        name: hashicorp
+        namespace: flux-system
+      version: ">=0.28.0 <1.0.0"
+  interval: 1h0m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    ui:
+      enabled: true
+      serviceType: ClusterIP
+    server:
+      image:
+        repository: hashicorp/vault
+        tag: 1.16.2
+      # Required for HA
+      ha:
+        enabled: true
+        replicas: 3
+        raft:
+          enabled: true
+          setNodeId: true
+          config: |
+            ui = true
+            listener "tcp" {
+              tls_disable = 1
+              address = "[::]:8200"
+              cluster_address = "[::]:8201"
+              telemetry {
+                unauthenticated_metrics_access = "true"
+              }
+            }
+            storage "raft" {
+              path = "/vault/data"
+            }
+            disable_mlock = true
+            service_registration "kubernetes" {}
+    # Inject vault agent for auto-auth if needed later
+    injector:
+      enabled: true

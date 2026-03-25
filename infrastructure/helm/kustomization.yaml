@@ -5,6 +5,8 @@ resources:
   - ./cert-manager-repo.yaml
   - ./cilium-repo.yaml
   - ./cnpg-repo.yaml
+  - ./external-secrets-repo.yaml
+  - ./hashicorp-repo.yaml
   - ./metrics-server-repo.yaml
   - ./openclaw-repo.yaml
   - ./prometheus-community-repo.yaml
