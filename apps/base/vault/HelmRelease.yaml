@@ -25,10 +25,19 @@ spec:
       image:
         repository: hashicorp/vault
         tag: 1.16.2
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values:
+                - node1
       # Required for HA
       ha:
         enabled: true
-        replicas: 3
+        replicas: 2
         raft:
           enabled: true
           setNodeId: true
