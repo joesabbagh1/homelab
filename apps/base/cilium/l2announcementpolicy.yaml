@@ -9,7 +9,8 @@ spec:
 
   # Target the specific interface found on your nodes
   interfaces:
-    - enp1s0
+    - ^enp.*
+    - ^enx.*
 
   # Announce both types of IPs
   externalIPs: true

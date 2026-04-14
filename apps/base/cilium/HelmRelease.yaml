@@ -29,7 +29,7 @@ spec:
     # Lower MTU to allow room for VXLAN headers
     mtu: 1400
     # Your physical interface
-    devices: "enp1s0"
+    devices: "enp+,enx+"
 
     # --- L2 & KUBE-PROXY ---
     kubeProxyReplacement: "true"
