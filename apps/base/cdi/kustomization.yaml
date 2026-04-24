@@ -3,6 +3,6 @@ kind: Kustomization
 namespace: cdi
 resources:
   # Upstream operator manifest — pinned to v1.65.0
+  # Note: cdi-operator.yaml already creates the cdi namespace
   - https://github.com/kubevirt/containerized-data-importer/releases/download/v1.65.0/cdi-operator.yaml
   - https://github.com/kubevirt/containerized-data-importer/releases/download/v1.65.0/cdi-cr.yaml
-  - namespace.yaml

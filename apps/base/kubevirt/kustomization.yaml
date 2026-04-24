@@ -3,6 +3,6 @@ kind: Kustomization
 namespace: kubevirt
 resources:
   # Upstream operator manifest — pinned to v1.8.2
+  # Note: kubevirt-operator.yaml already creates the kubevirt namespace
   - https://github.com/kubevirt/kubevirt/releases/download/v1.8.2/kubevirt-operator.yaml
-  - namespace.yaml
   - kubevirt-cr.yaml
