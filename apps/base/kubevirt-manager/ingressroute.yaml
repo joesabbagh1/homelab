@@ -1,0 +1,30 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubevirt-manager-tls
+  namespace: kubevirt-manager
+spec:
+  secretName: kubevirt-manager-tls
+  issuerRef:
+    name: letsencrypt-dns
+    kind: ClusterIssuer
+  dnsNames:
+    - kubevirt.joesabbagh.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kubevirt-manager
+  namespace: kubevirt-manager
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`kubevirt.joesabbagh.com`)
+      kind: Rule
+      services:
+        - name: kubevirt-manager
+          port: 8080
+  tls:
+    secretName: kubevirt-manager-tls

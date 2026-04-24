@@ -1,0 +1,78 @@
+---
+# ServiceAccount for kubevirt-manager pod
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubevirt-manager
+  namespace: kubevirt-manager
+---
+# ClusterRole: full access to KubeVirt, CDI, and core resources needed by the UI
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubevirt-manager
+rules:
+  # VirtualMachine resources
+  - apiGroups: ["kubevirt.io"]
+    resources:
+      - virtualmachines
+      - virtualmachineinstances
+      - virtualmachineinstancemigrations
+      - virtualmachineinstancepresets
+      - virtualmachineinstancereplicasets
+      - kubevirts
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # CDI resources (DataVolumes / disk import)
+  - apiGroups: ["cdi.kubevirt.io"]
+    resources:
+      - datavolumes
+      - datasources
+      - dataimportcrons
+      - storageprofiles
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Subresources (VNC, console, RDP)
+  - apiGroups: ["subresources.kubevirt.io"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  # Core resources: pods, PVCs, services, nodes, namespaces
+  - apiGroups: [""]
+    resources:
+      - pods
+      - persistentvolumeclaims
+      - persistentvolumes
+      - services
+      - nodes
+      - namespaces
+      - secrets
+      - configmaps
+      - resourcequotas
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Storage classes
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  # Metrics
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["nodes", "pods"]
+    verbs: ["get", "list", "watch"]
+  # Snapshot support
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots", "volumesnapshotclasses", "volumesnapshotcontents"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Network
+  - apiGroups: ["k8s.cni.cncf.io"]
+    resources: ["network-attachment-definitions"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubevirt-manager
+subjects:
+  - kind: ServiceAccount
+    name: kubevirt-manager
+    namespace: kubevirt-manager
+roleRef:
+  kind: ClusterRole
+  name: kubevirt-manager
+  apiGroup: rbac.authorization.k8s.io

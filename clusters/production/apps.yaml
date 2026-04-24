@@ -63,3 +63,76 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+---
+# KubeVirt operator — installs CRDs before any VM resources are applied
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kubevirt
+  namespace: flux-system
+spec:
+  interval: 1h
+  path: ./apps/production/kubevirt
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  healthChecks:
+    - apiVersion: kubevirt.io/v1
+      kind: KubeVirt
+      name: kubevirt
+      namespace: kubevirt
+  timeout: 10m
+---
+# CDI operator — installs DataVolume CRDs before VMs are applied
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cdi
+  namespace: flux-system
+spec:
+  interval: 1h
+  path: ./apps/production/cdi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  healthChecks:
+    - apiVersion: cdi.kubevirt.io/v1beta1
+      kind: CDI
+      name: cdi
+      namespace: cdi
+  timeout: 10m
+---
+# KubeVirt Manager web UI — depends on KubeVirt CRDs being present
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kubevirt-manager
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: kubevirt
+  interval: 1h
+  path: ./apps/production/kubevirt-manager
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+# VM workloads — depends on both KubeVirt (VM CRDs) and CDI (DataVolume CRDs)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: vms
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: kubevirt
+    - name: cdi
+  interval: 1h
+  path: ./apps/production/vms
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system

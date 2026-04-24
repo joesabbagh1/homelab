@@ -1,0 +1,96 @@
+---
+# DataVolume: CDI imports Ubuntu 24.04 cloud image into a PVC.
+# The import happens once; after that the PVC is the VM's boot disk.
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: ubuntu-2404-disk
+  namespace: vms
+spec:
+  source:
+    http:
+      # Official Ubuntu 24.04 LTS cloud image (QCOW2, ~600 MB download)
+      url: "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        # Expands the image to 50Gi after import
+        storage: 50Gi
+    storageClassName: local-path
+---
+# VirtualMachine: Ubuntu 24.04 LTS with cloud-init for SSH access
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: ubuntu-01
+  namespace: vms
+  labels:
+    app: ubuntu-01
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        app: ubuntu-01
+    spec:
+      domain:
+        cpu:
+          cores: 2
+          sockets: 1
+          threads: 1
+        memory:
+          guest: 4Gi
+        resources:
+          requests:
+            memory: 4Gi
+        devices:
+          disks:
+            - name: bootdisk
+              disk:
+                bus: virtio
+            - name: cloudinit
+              disk:
+                bus: virtio
+          interfaces:
+            - name: default
+              masquerade: {}
+          rng: {}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - name: bootdisk
+          dataVolume:
+            name: ubuntu-2404-disk
+        - name: cloudinit
+          cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              hostname: ubuntu-01
+              users:
+                - name: ubuntu
+                  sudo: ALL=(ALL) NOPASSWD:ALL
+                  shell: /bin/bash
+                  ssh_authorized_keys: []
+                  lock_passwd: false
+                  # Change this password immediately after first login!
+                  passwd: "$6$rounds=4096$saltsalt$hashedpassword"
+              chpasswd:
+                list: |
+                  ubuntu:ChangeMe123!
+                expire: false
+              # Install XRDP for RDP access + LXDE lightweight desktop
+              packages:
+                - qemu-guest-agent
+                - xrdp
+                - lxde-core
+              runcmd:
+                - systemctl enable qemu-guest-agent && systemctl start qemu-guest-agent
+                - systemctl enable xrdp && systemctl start xrdp
+                - adduser xrdp ssl-cert
+                - echo "lxsession -s LXDE -e LXDE" > /home/ubuntu/.xsession
+                - chown ubuntu:ubuntu /home/ubuntu/.xsession
+              package_update: true
+              package_upgrade: false

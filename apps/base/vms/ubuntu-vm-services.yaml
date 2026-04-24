@@ -1,0 +1,40 @@
+---
+# RDP LoadBalancer: direct RDP access from your LAN to the Ubuntu VM.
+# Cilium L2 will announce a dedicated IP from the pool (192.168.0.30–50).
+# Connect with any RDP client to <EXTERNAL-IP>:3389
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-01-rdp
+  namespace: vms
+  labels:
+    app: ubuntu-01
+spec:
+  type: LoadBalancer
+  loadBalancerClass: io.cilium/l2-announcer
+  selector:
+    app: ubuntu-01
+  ports:
+    - name: rdp
+      port: 3389
+      targetPort: 3389
+      protocol: TCP
+---
+# SSH LoadBalancer: optional direct SSH access (useful for initial setup)
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-01-ssh
+  namespace: vms
+  labels:
+    app: ubuntu-01
+spec:
+  type: LoadBalancer
+  loadBalancerClass: io.cilium/l2-announcer
+  selector:
+    app: ubuntu-01
+  ports:
+    - name: ssh
+      port: 22
+      targetPort: 22
+      protocol: TCP
