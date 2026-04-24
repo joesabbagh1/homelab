@@ -29,6 +29,14 @@ spec:
     # Lower MTU to allow room for VXLAN headers
     mtu: 1400
 
+    # Restrict Cilium to only the active USB NIC on node1.
+    # Root cause: at boot, enp1s0 (PCIe, DOWN/no-IP) appears before enx6c6e07288954
+    # (USB NIC) finishes initializing. Cilium locks in enp1s0 as direct-routing-device
+    # and never updates it, causing "IPv4 direct routing device IP not found".
+    # Limiting to enx+ ensures only the USB NIC is ever considered.
+    devices: "enx+"
+
+
     # --- L2 & KUBE-PROXY ---
     kubeProxyReplacement: "true"
     bpf:
