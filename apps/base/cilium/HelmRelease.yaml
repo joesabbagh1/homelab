@@ -28,10 +28,6 @@ spec:
 
     # Lower MTU to allow room for VXLAN headers
     mtu: 1400
-    # Active NIC on node1 — enp1s0 (onboard) is DOWN, only USB NIC (enx+) is up.
-    # Listing enp+ caused Cilium to pick the downed interface and fail with
-    # "IPv4 direct routing device IP not found" → 429 on endpoint creation.
-    devices: "enx+"
 
     # --- L2 & KUBE-PROXY ---
     kubeProxyReplacement: "true"
