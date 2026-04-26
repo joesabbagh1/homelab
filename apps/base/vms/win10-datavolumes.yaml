@@ -1,35 +1,10 @@
 ---
-# Windows 10 ISO — uploaded from your laptop using virtctl image-upload
-# CDI creates the PVC and waits; virtctl streams the ISO into it.
-#
-# After committing this and letting Flux apply it, run:
-#   virtctl image-upload \
-#     --image-path=/path/to/Win10.iso \
-#     --pvc-name=win10-iso \
-#     --pvc-size=8Gi \
-#     --namespace=vms \
-#     --storage-class=local-path \
-#     --access-mode=ReadWriteOnce \
-#     --insecure
-apiVersion: cdi.kubevirt.io/v1beta1
-kind: DataVolume
-metadata:
-  name: win10-iso
-  namespace: vms
-spec:
-  source:
-    upload: {}
-  pvc:
-    accessModes:
-      - ReadWriteOnce
-    resources:
-      requests:
-        storage: 8Gi
-    storageClassName: local-path
-    volumeMode: Filesystem
+# NOTE: win10-iso PVC is managed manually (created via `virtctl image-upload`).
+# It is NOT managed by Flux — CDI's webhook blocks DataVolume spec updates
+# once a DataVolume has been created. The PVC exists in the cluster with the ISO data.
+
 ---
-# VirtIO drivers ISO — public URL, no changes needed
-# Required for Windows to see the disk and NIC during installation
+# VirtIO drivers ISO — downloaded automatically by CDI
 apiVersion: cdi.kubevirt.io/v1beta1
 kind: DataVolume
 metadata:
@@ -48,7 +23,7 @@ spec:
     storageClassName: local-path
     volumeMode: Filesystem
 ---
-# Blank boot disk — Windows will install onto this
+# Blank boot disk — Windows installs onto this
 apiVersion: cdi.kubevirt.io/v1beta1
 kind: DataVolume
 metadata:
