@@ -63,7 +63,8 @@ spec:
               enabled: true
             synictimer:
               enabled: true
-              direct: true
+              direct:
+                enabled: true
             tlbflush:
               enabled: true
             frequencies:
