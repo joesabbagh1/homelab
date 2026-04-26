@@ -97,12 +97,9 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  healthChecks:
-    - apiVersion: cdi.kubevirt.io/v1beta1
-      kind: CDI
-      name: cdi
-      namespace: cdi
-  timeout: 10m
+  # Note: no healthCheck — CDI CR status stays 'Unknown' during upgrades
+  # which would permanently block the vms kustomization
+
 ---
 # KubeVirt Manager web UI — depends on KubeVirt CRDs being present
 apiVersion: kustomize.toolkit.fluxcd.io/v1

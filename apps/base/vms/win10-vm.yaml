@@ -32,10 +32,10 @@ spec:
           sockets: 1
           threads: 1
         memory:
-          guest: 8Gi
+          guest: 4Gi
         resources:
           requests:
-            memory: 8Gi
+            memory: 4Gi
         # q35 chipset is required for Windows — supports PCIe and UEFI
         machine:
           type: q35
