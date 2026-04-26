@@ -41,8 +41,7 @@ spec:
           type: q35
         firmware:
           bootloader:
-            efi:
-              secureBoot: false   # set true later if desired
+            bios: {}   # set true later if desired
         features:
           acpi: {}
           apic: {}
@@ -85,12 +84,12 @@ spec:
             hyperv: {}
         devices:
           disks:
-            # Boot disk — VirtIO for best performance
+            # ── Boot disk (keep forever) ──────────────────────────────────
             - name: bootdisk
               bootOrder: 2
               disk:
                 bus: virtio
-            # Windows 10 ISO — SATA CDROM (before VirtIO drivers are installed)
+            # ── INSTALLATION ONLY — remove these two after Windows install ──
             - name: win10-iso
               bootOrder: 1
               cdrom:
