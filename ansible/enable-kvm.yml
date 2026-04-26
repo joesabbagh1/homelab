@@ -1,0 +1,42 @@
+---
+# Enable KVM on all worker nodes for KubeVirt
+# Nodes have AMD CPUs (SVM/AMD-V), so we load kvm_amd
+#
+# Usage:
+#   ansible-playbook -i inventory.ini enable-kvm.yml --ask-vault-pass
+- name: Enable KVM kernel module on worker nodes
+  hosts: workers
+  become: true
+  tasks:
+    - name: Load kvm_amd module immediately
+      community.general.modprobe:
+        name: kvm_amd
+        state: present
+
+    - name: Persist kvm_amd across reboots via modules-load.d
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/kvm.conf
+        content: "kvm_amd\n"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Verify /dev/kvm exists
+      ansible.builtin.stat:
+        path: /dev/kvm
+      register: kvm_dev
+
+    - name: Assert KVM device is present
+      ansible.builtin.assert:
+        that: kvm_dev.stat.exists
+        fail_msg: "/dev/kvm not found after loading kvm_amd — check BIOS virtualisation settings"
+        success_msg: "✅ /dev/kvm is present on {{ inventory_hostname }}"
+
+    - name: Show KVM device permissions
+      ansible.builtin.command: ls -la /dev/kvm
+      register: kvm_ls
+      changed_when: false
+
+    - name: Print KVM device info
+      ansible.builtin.debug:
+        msg: "{{ kvm_ls.stdout }}"

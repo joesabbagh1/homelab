@@ -1,0 +1,20 @@
+---
+# RDP access — Cilium L2 LoadBalancer, direct LAN access on port 3389
+# Connect with: mstsc / Microsoft Remote Desktop to <EXTERNAL-IP>:3389
+apiVersion: v1
+kind: Service
+metadata:
+  name: win10-01-rdp
+  namespace: vms
+  labels:
+    app: win10-01
+spec:
+  type: LoadBalancer
+  loadBalancerClass: io.cilium/l2-announcer
+  selector:
+    app: win10-01
+  ports:
+    - name: rdp
+      port: 3389
+      targetPort: 3389
+      protocol: TCP

@@ -3,5 +3,10 @@ kind: Kustomization
 namespace: vms
 resources:
   - namespace.yaml
+  # Ubuntu VM
   - ubuntu-vm.yaml
   - ubuntu-vm-services.yaml
+  # Windows 10 VM
+  - win10-datavolumes.yaml
+  - win10-vm.yaml
+  - win10-services.yaml

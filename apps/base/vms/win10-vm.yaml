@@ -1,0 +1,125 @@
+---
+# Windows 10 VirtualMachine
+# 
+# INSTALLATION FLOW:
+#   1. VM boots from win10-iso (CDROM) — go through Windows installer via VNC
+#   2. When asked for drivers: Load driver → VirtIO CDROM → vioscsi\w10\amd64
+#   3. Install Windows onto the 60Gi disk
+#   4. Shut down → edit VM to set "running: false", remove CDROMs, set running: true
+#      (or just remove the iso disks/volumes below and reapply)
+#
+# POST-INSTALL:
+#   - Run virtio-win-gt-x64.msi from the VirtIO CDROM to install all drivers
+#   - Enable RDP: Settings → System → Remote Desktop → On
+#   - Set a password on the Administrator account
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: win10-01
+  namespace: vms
+  labels:
+    app: win10-01
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        app: win10-01
+    spec:
+      domain:
+        cpu:
+          cores: 4
+          sockets: 1
+          threads: 1
+        memory:
+          guest: 8Gi
+        resources:
+          requests:
+            memory: 8Gi
+        # q35 chipset is required for Windows — supports PCIe and UEFI
+        machine:
+          type: q35
+        firmware:
+          bootloader:
+            efi:
+              secureBoot: false   # set true later if desired
+        features:
+          acpi: {}
+          apic: {}
+          smm:
+            enabled: true   # required for UEFI/Secure Boot
+          hyperv:
+            # HyperV enlightenments — improve Windows performance significantly
+            relaxed:
+              enabled: true
+            vapic:
+              enabled: true
+            vpindex:
+              enabled: true
+            spinlocks:
+              enabled: true
+              spinlocks: 8191
+            synic:
+              enabled: true
+            synictimer:
+              enabled: true
+              direct: true
+            tlbflush:
+              enabled: true
+            frequencies:
+              enabled: true
+            reenlightenment:
+              enabled: true
+            ipi:
+              enabled: true
+        clock:
+          utc: {}
+          timer:
+            hpet:
+              present: false
+            pit:
+              tickPolicy: delay
+            rtc:
+              tickPolicy: catchup
+            hyperv: {}
+        devices:
+          disks:
+            # Boot disk — VirtIO for best performance
+            - name: bootdisk
+              bootOrder: 2
+              disk:
+                bus: virtio
+            # Windows 10 ISO — SATA CDROM (before VirtIO drivers are installed)
+            - name: win10-iso
+              bootOrder: 1
+              cdrom:
+                bus: sata
+                readonly: true
+            # VirtIO drivers ISO — load during Windows installer
+            - name: virtio-iso
+              cdrom:
+                bus: sata
+                readonly: true
+          interfaces:
+            - name: default
+              model: virtio
+              masquerade: {}
+          # Tablet gives better mouse tracking in VNC console
+          inputs:
+            - type: tablet
+              bus: usb
+              name: tablet
+          rng: {}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - name: bootdisk
+          dataVolume:
+            name: win10-disk
+        - name: win10-iso
+          dataVolume:
+            name: win10-iso
+        - name: virtio-iso
+          dataVolume:
+            name: virtio-win-iso
