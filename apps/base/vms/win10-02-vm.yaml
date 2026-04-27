@@ -1,23 +1,18 @@
 ---
-# Windows 10 VirtualMachine
-#
-# PHASE 2 — POST-INSTALL (current state):
-#   The installation ISOs have been removed.
-#   RDP is enabled.
-#   runStrategy is RerunOnFailure (it won't forcefully restart if you turn it off from inside Windows).
+# Windows 10 VirtualMachine 02
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
-  name: win10-01
+  name: win10-02
   namespace: vms
   labels:
-    app: win10-01
+    app: win10-02
 spec:
   runStrategy: RerunOnFailure
   template:
     metadata:
       labels:
-        app: win10-01
+        app: win10-02
     spec:
       domain:
         cpu:
@@ -33,7 +28,7 @@ spec:
           type: q35
         firmware:
           bootloader:
-            bios: {}   # Legacy BIOS prevents TianoCore bugs
+            bios: {}
         features:
           acpi: {}
           apic: {}
@@ -75,11 +70,20 @@ spec:
             hyperv: {}
         devices:
           disks:
-            # ── Boot disk (keep forever) ──────────────────────────────────
             - name: bootdisk
-              bootOrder: 1
+              bootOrder: 2
               disk:
                 bus: virtio
+            # ── INSTALLATION ONLY — remove these two after Windows install ──
+            - name: win10-iso
+              bootOrder: 1
+              cdrom:
+                bus: sata
+                readonly: true
+            - name: virtio-iso
+              cdrom:
+                bus: sata
+                readonly: true
           interfaces:
             - name: default
               model: virtio
@@ -95,4 +99,12 @@ spec:
       volumes:
         - name: bootdisk
           dataVolume:
-            name: win10-disk
+            name: win10-02-disk
+        # ── INSTALLATION ONLY — remove these two after Windows install ──
+        # We REUSE the existing ISO PVCs so no re-uploading is needed!
+        - name: win10-iso
+          persistentVolumeClaim:
+            claimName: win10-iso
+        - name: virtio-iso
+          persistentVolumeClaim:
+            claimName: virtio-win-iso

@@ -1,0 +1,18 @@
+---
+# Blank boot disk for VM 02
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: win10-02-disk
+  namespace: vms
+spec:
+  source:
+    blank: {}
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 60Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
