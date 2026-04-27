@@ -20,7 +20,7 @@ metadata:
   labels:
     app: win10-01
 spec:
-  running: true
+  runStrategy: RerunOnFailure
   template:
     metadata:
       labels:
