@@ -28,7 +28,8 @@ spec:
           type: q35
         firmware:
           bootloader:
-            bios: {}
+            efi:
+              secureBoot: false
         features:
           acpi: {}
           apic: {}
@@ -101,10 +102,10 @@ spec:
           dataVolume:
             name: win10-02-disk
         # ── INSTALLATION ONLY — remove these two after Windows install ──
-        # We REUSE the existing ISO PVCs so no re-uploading is needed!
+        # Uses explicit DataVolumes to ensure they schedule correctly.
         - name: win10-iso
-          persistentVolumeClaim:
-            claimName: win10-iso
+          dataVolume:
+            name: win10-02-iso
         - name: virtio-iso
-          persistentVolumeClaim:
-            claimName: virtio-win-iso
+          dataVolume:
+            name: virtio-win-02-iso

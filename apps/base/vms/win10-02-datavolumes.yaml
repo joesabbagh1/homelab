@@ -16,3 +16,42 @@ spec:
         storage: 60Gi
     storageClassName: local-path
     volumeMode: Filesystem
+
+---
+# Windows ISO for VM 02 (waiting for upload)
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: win10-02-iso
+  namespace: vms
+spec:
+  source:
+    upload: {}
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 8Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
+
+---
+# VirtIO ISO for VM 02
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: virtio-win-02-iso
+  namespace: vms
+spec:
+  source:
+    http:
+      url: "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso"
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: local-path
+    volumeMode: Filesystem
