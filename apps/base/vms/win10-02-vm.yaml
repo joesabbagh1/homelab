@@ -28,8 +28,7 @@ spec:
           type: q35
         firmware:
           bootloader:
-            efi:
-              secureBoot: false
+            bios: {}
         features:
           acpi: {}
           apic: {}
