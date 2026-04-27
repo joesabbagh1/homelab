@@ -33,7 +33,8 @@ spec:
           type: q35
         firmware:
           bootloader:
-            bios: {}   # Legacy BIOS prevents TianoCore bugs
+            efi:
+              secureBoot: false
         features:
           acpi: {}
           apic: {}
