@@ -7,8 +7,4 @@ resources:
   - win10-datavolumes.yaml
   - win10-vm.yaml
   - win10-services.yaml
-  # Windows 10 VM 2
-  - win10-02-datavolumes.yaml
-  - win10-02-vm.yaml
-  - win10-02-services.yaml
 
