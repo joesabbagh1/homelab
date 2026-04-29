@@ -71,19 +71,9 @@ spec:
         devices:
           disks:
             - name: bootdisk
-              bootOrder: 2
+              bootOrder: 1
               disk:
                 bus: virtio
-            # ── INSTALLATION ONLY — remove these two after Windows install ──
-            - name: win10-iso
-              bootOrder: 1
-              cdrom:
-                bus: sata
-                readonly: true
-            - name: virtio-iso
-              cdrom:
-                bus: sata
-                readonly: true
           interfaces:
             - name: default
               model: virtio
@@ -100,11 +90,3 @@ spec:
         - name: bootdisk
           dataVolume:
             name: win10-02-disk
-        # ── INSTALLATION ONLY — remove these two after Windows install ──
-        # Uses explicit DataVolumes to ensure they schedule correctly.
-        - name: win10-iso
-          dataVolume:
-            name: win10-02-iso
-        - name: virtio-iso
-          dataVolume:
-            name: virtio-win-02-iso
