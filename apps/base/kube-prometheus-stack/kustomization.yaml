@@ -4,4 +4,6 @@ namespace: monitoring
 resources:
   - ./namespace.yaml
   - ./HelmRelease.yaml
+  - ./loki-HelmRelease.yaml
+  - ./promtail-HelmRelease.yaml
   - ./ingressroute.yaml

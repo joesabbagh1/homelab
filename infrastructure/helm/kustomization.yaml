@@ -6,6 +6,8 @@ resources:
   - ./cilium-repo.yaml
   - ./cnpg-repo.yaml
   - ./external-secrets-repo.yaml
+  - ./grafana-community-repo.yaml
+  - ./grafana-repo.yaml
   - ./hashicorp-repo.yaml
   - ./metrics-server-repo.yaml
   - ./openclaw-repo.yaml
